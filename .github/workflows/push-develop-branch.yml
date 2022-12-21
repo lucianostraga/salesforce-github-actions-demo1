@@ -34,8 +34,8 @@ jobs:
               with:
                 fetch-depth: 0
 
-            # Store secret for both otgs
-            - name: 'Populate auth file with SFDX_URL secret of the QA
+            # Store secret for both orgs
+            - name: 'Populate auth file with SFDX_URL secret of the QA'
               shell: bash
               run: |
                   echo ${{ secrets.SFDX_QA_URL}} > ./SFDX_QA_URL.txt

@@ -35,7 +35,7 @@ jobs:
                 fetch-depth: 0
 
             # Store secret for developer sandboxes
-            - name: 'Populate auth file with SFDX_URL secret of developer sandboxes
+            - name: 'Populate auth file with SFDX_URL secret of developer sandboxes'
               shell: bash
               run: |
                   echo ${{ secrets.SFDX_LUCIANO_DEV_URL}} > ./SFDX_LUCIANO_DEV_URL.txt
