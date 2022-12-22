@@ -175,7 +175,6 @@ jobs:
               if: ${{ env.APEX_TESTS == 'all' }}
               run: |
                   sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunLocalTests  --json
-            - name: 'Deploy destructive changes (if any)'
             
             # If the env variable equals none, we do not run test classes
             - name: 'Check-only deploy delta changes - run all tests'
