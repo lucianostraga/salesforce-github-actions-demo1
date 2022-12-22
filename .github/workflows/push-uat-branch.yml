@@ -47,8 +47,8 @@ jobs:
             - name: 'Authenticate to UAT Sandbox'
               run: sfdx auth:sfdxurl:store -f ./SFDX_UAT_URL.txt -s -a integration
 
-            - name: 'Deploy the entire branch to UAT Sandbox'
-              run: sfdx force:source:deploy -p force-app --testlevel NoTestRun 
+            - name: 'Deploy the delta changes to UAT Sandbox'
+              run: sfdx force:source:deploy -p "changed-sources/force-app" --testlevel NoTestRun 
 
             - name: 'Deploy destructive changes (if any) to UAT Sandbox'
               run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --ignorewarnings 

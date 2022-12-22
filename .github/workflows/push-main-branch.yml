@@ -47,8 +47,8 @@ jobs:
             - name: 'Authenticate to Developer Sandboxes'
               run: sfdx auth:sfdxurl:store -f ./SFDX_LUCIANO_DEV_URL.txt -s -a integration
 
-            - name: 'Deploy the entire branch to Developer Sandboxes'
-              run: sfdx force:source:deploy -p force-app --testlevel NoTestRun 
+            - name: 'Deploy the delta changes to Developer Sandboxes'
+              run: sfdx force:source:deploy -p "changed-sources/force-app" --testlevel NoTestRun 
 
             - name: 'Deploy destructive changes (if any) to Developer Sandboxes'
               run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --ignorewarnings 
