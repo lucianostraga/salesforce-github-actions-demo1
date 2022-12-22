@@ -11,7 +11,7 @@ on:
 
 # Jobs to be executed
 jobs:
-    deploy-branch-to-int-and-staging-orgs:
+    deploy-uat-branch-deltas-on-uat-sandbox:
         runs-on: ubuntu-latest
         if: ${{ github.actor != 'dependabot[bot]' }}
         steps:
