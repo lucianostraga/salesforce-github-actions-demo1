@@ -89,9 +89,6 @@ jobs:
               run: |
                 sudo apt-get update
                 sudo apt install default-jdk
-            # Install SFDX scanner
-            - name: 'Installing SFDX scanner'
-              run: sfdx plugins:install @salesforce/sfdx-scanner
 
             # Prior to setting up this workflow, you have to create a Github Secret
             # that contains the sfdx url of the qa sandbox.
@@ -123,9 +120,9 @@ jobs:
                   sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/ 
  
             # We do a check-only deploy 
-            - name: 'Check-only deploy delta changes - run all tests'
+            - name: 'Check-only deploy delta changes - No Test Classes run'
               run: |
-                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel --testlevel NoTestRun --json
+                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel NoTestRun --json
             
             # Run destructive changes
             - name: 'Deploy destructive changes (if any)'
