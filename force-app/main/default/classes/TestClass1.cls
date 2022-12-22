@@ -1,7 +1,7 @@
 public with sharing class TestClass1 {
     
     public static String someMethod(){
-        return 'hi!';
+        return 'hi! hello';
     }
 
 }
