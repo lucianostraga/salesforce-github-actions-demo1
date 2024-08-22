@@ -35,7 +35,7 @@ jobs:
                 fetch-depth: 0
 
             # Store secret for UAT sandbox
-            - name: 'Populate auth file with SFDX_URL secret of the QA'
+            - name: 'Populate auth file with SFDX_URL secret of the UAT'
               shell: bash
               run: |
                   echo ${{ secrets.SFDX_UAT_URL}} > ./SFDX_UAT_URL.txt
