@@ -1,5 +1,5 @@
 # Unique name for this workflow
-name: Deploy PR merged on Develop branch to QA Sandbox
+name: Deploy PR merged on Develop branch to Develop Sandbox
 
 # Definition when the workflow should run
 on:
@@ -11,7 +11,7 @@ on:
 
 # Jobs to be executed
 jobs:
-    deploy-develop-branch-deltas-on-qa-sandbox:
+    deploy-develop-branch-deltas-on-develop-sandbox:
         runs-on: ubuntu-latest
         if: ${{ github.actor != 'dependabot[bot]' }}
         steps:
@@ -35,22 +35,22 @@ jobs:
                 fetch-depth: 0
 
             # Store secret for both orgs
-            - name: 'Populate auth file with SFDX_URL secret of the QA'
+            - name: 'Populate auth file with SFDX_URL secret of the Develop sandbox'
               shell: bash
               run: |
-                  echo ${{ secrets.SFDX_QA_URL}} > ./SFDX_QA_URL.txt
+                  echo ${{ secrets.SFDX_DEV_URL}} > ./SFDX_DEV_URL.txt
             - name: 'Create delta packages for new, modified or deleted metadata'
               run: | 
                   mkdir changed-sources
                   sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
             # Authenticate to org
-            - name: 'Authenticate to QA Sandbox'
-              run: sfdx auth:sfdxurl:store -f ./SFDX_QA_URL.txt -s -a qa
+            - name: 'Authenticate to Develop Sandbox'
+              run: sfdx auth:sfdxurl:store -f ./SFDX_DEV_URL.txt -s -a develop
 
-            - name: 'Deploy the delta changes to QA Sandbox'
+            - name: 'Deploy the delta changes to Develop Sandbox'
               run: sfdx force:source:deploy -p "changed-sources/force-app" --testlevel NoTestRun 
 
-            - name: 'Deploy destructive changes (if any) to QA Sandbox'
-              run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings 
+            - name: 'Deploy destructive changes (if any) to Develop Sandbox'
+              run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --ignorewarnings 
 
            
