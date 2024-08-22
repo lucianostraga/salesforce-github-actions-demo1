@@ -22,7 +22,7 @@ on:
 # Jobs to be executed when the above conditions are met
 jobs:
     # This is the name of the job. You can give it whatever name you want
-    validate-deployment-on-qa-org:
+    validate-deployment-on-develop-org:
         # As mentioned in the blog post, this job runs inside a VM. Here we
         # can specify which OS this VM should run on. 
         # In this case, we are going to run our commands on the latest version
@@ -91,7 +91,7 @@ jobs:
                 sudo apt install default-jdk
 
             # Prior to setting up this workflow, you have to create a Github Secret
-            # that contains the sfdx url of the qa sandbox.
+            # that contains the sfdx url of the develop sandbox.
 
             # The steps to generate the url are here 
             # https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference_auth_sfdxurl.htm
@@ -101,15 +101,15 @@ jobs:
             # was generated from. This works just like that, there's no need to create
             # connected apps or any else. 
 
-            # The URL is stored in the Github Secret named SFDX_QA_URL
+            # The URL is stored in the Github Secret named SFDX_DEV_URL
             # so here we store the URL into a text file
-            - name: 'Populate auth file with SFDX_URL secret of QA Sandbox'
+            - name: 'Populate auth file with SFDX_URL secret of Develop Sandbox'
               shell: bash
               run: |
-                  echo ${{ secrets.SFDX_QA_URL}} > ./SFDX_QA_URL.txt
+                  echo ${{ secrets.SFDX_DEV_URL}} > ./SFDX_DEV_URL.txt
             # Authenticate to org using the URL stored in the text file
-            - name: 'Authenticate to QA Sandbox'
-              run: sfdx auth:sfdxurl:store -f ./SFDX_QA_URL.txt -s -a qa
+            - name: 'Authenticate to Develop Sandbox'
+              run: sfdx auth:sfdxurl:store -f ./SFDX_DEV_URL.txt -s -a merge
 
             # We use SFDX Git Delta to create a directory with only the metadata that has changed.
             # this allows us to deploy only those changes, as opposed to deploying the entire branch. 
