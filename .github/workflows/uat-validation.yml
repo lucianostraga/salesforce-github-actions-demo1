@@ -1,0 +1,57 @@
+name: Validate Deployment on UAT Org
+
+on:
+    pull_request:
+      types: [opened, synchronize]
+      branches: [ uat ]
+      paths:
+        - 'force-app/**'
+            
+jobs:
+    validate-deployment-on-uat-org:
+        runs-on: ubuntu-latest
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        steps:
+            - uses: actions/setup-node@v3
+              with:
+                node-version: '23'
+                
+            - name: 'Checkout source code'
+              uses: actions/checkout@v3
+              with:
+                fetch-depth: 0
+            
+            - name: 'Install Salesforce CLI'
+              run: |
+                  wget https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz
+                  mkdir -p ~/cli/sf
+                  tar xJf sf-linux-x64.tar.xz -C ~/cli/sf --strip-components 1
+                  export PATH="$HOME/cli/sf/bin:$PATH"
+                  ~/cli/sf/bin/sf version
+
+            - name: 'Install sf-git-delta plugin'
+              run: | 
+                  echo y | ~/cli/sf/bin/sf plugins install sfdx-git-delta
+                  ~/cli/sf/bin/sf plugins
+
+            - name: 'Installing java'
+              run: |
+                sudo apt-get update
+                sudo apt install default-jdk
+
+            - name: 'Populate auth file with SFDX_URL secret of UAT Sandbox'
+              shell: bash
+              run: |
+                  echo ${{ secrets.SFDX_UAT_URL}} > ./SFDX_UAT_URL.txt
+
+            - name: 'Authenticate to UAT Sandbox'
+              run: ~/cli/sf/bin/sf org login sfdx-url --sfdx-url-file ./SFDX_UAT_URL.txt --alias uat
+              
+            - name: 'Create delta packages for new, modified or deleted metadata'
+              run: | 
+                  mkdir changed-sources
+                  ~/cli/sf/bin/sf sgd source delta --to "HEAD" --from "HEAD^" --output-dir changed-sources/ --generate-delta --source-dir force-app/
+ 
+            - name: 'Check-only deploy delta changes - RunLocalTests'
+              run: |
+                  ~/cli/sf/bin/sf project deploy validate --source-dir changed-sources/force-app --test-level RunLocalTests --target-org uat
